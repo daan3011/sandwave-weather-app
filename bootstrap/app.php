@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->appendToGroup('api', [
             App\Http\Middleware\ForceJsonResponse::class,
+            \Rakutentech\LaravelRequestDocs\LaravelRequestDocsMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

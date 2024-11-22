@@ -9,7 +9,6 @@ interface WeatherMonitorRepositoryInterface
 {
     public function create(array $data): WeatherMonitor;
     public function find(int $id): ?WeatherMonitor;
-    public function update(WeatherMonitor $weatherMonitor, array $data): bool;
     public function delete(WeatherMonitor $weatherMonitor): bool;
     public function getAll(int $perPage = 15): LengthAwarePaginator;
     public function getMonitorsForUpdate(\DateTime $currentTime): Collection;
