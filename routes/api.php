@@ -6,6 +6,7 @@ use App\Http\Controllers\WeatherController;
 use App\Http\Controllers\WeatherMonitorController;
 
 Route::get('/weather', WeatherController::class);
-Route::apiResource('weather-monitors', WeatherMonitorController::class);
+Route::apiResource('weather-monitors', WeatherMonitorController::class)
+->except(['update']);
 
 
