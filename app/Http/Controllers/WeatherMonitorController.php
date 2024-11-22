@@ -10,8 +10,8 @@ use App\Interfaces\Services\WeatherMonitorServiceInterface;
 
 class WeatherMonitorController extends Controller
 {
-
     const PER_PAGE = 15;
+
     protected WeatherMonitorServiceInterface $weatherMonitorService;
 
     public function __construct(WeatherMonitorServiceInterface $weatherMonitorService)
@@ -44,7 +44,7 @@ class WeatherMonitorController extends Controller
             return response()->json(['message' => 'Weather monitor not found.'], 404);
         }
 
-        return new WeatherMonitorResource($weatherMonitor);
+        return (new WeatherMonitorResource($weatherMonitor))->response();
     }
 
     public function destroy(int $id): JsonResponse

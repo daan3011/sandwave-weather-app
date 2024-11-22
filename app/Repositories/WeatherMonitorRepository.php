@@ -9,6 +9,8 @@ use App\Interfaces\Repositories\WeatherMonitorRepositoryInterface;
 
 class WeatherMonitorRepository implements WeatherMonitorRepositoryInterface
 {
+    const PER_PAGE = 15;
+
     public function create(array $data): WeatherMonitor
     {
         return WeatherMonitor::create($data);
@@ -29,7 +31,7 @@ class WeatherMonitorRepository implements WeatherMonitorRepositoryInterface
         return $weatherMonitor->delete();
     }
 
-    public function getAll(int $perPage = 15): LengthAwarePaginator
+    public function getAll(int $perPage = self::PER_PAGE): LengthAwarePaginator
     {
         return WeatherMonitor::paginate($perPage);
     }
