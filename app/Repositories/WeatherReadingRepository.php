@@ -13,8 +13,24 @@ class WeatherReadingRepository implements WeatherReadingRepositoryInterface
         return WeatherReading::create($data);
     }
 
-    public function getAll(int $perPage = 15): LengthAwarePaginator
+    public function getAll(array $filters, int $perPage = 15): LengthAwarePaginator
     {
-        return WeatherReading::paginate($perPage);
+        $query = WeatherReading::query();
+
+        if (isset($filters['weather_monitor_id'])) {
+            $query->where('weather_monitor_id', $filters['weather_monitor_id']);
+        }
+
+        if (isset($filters['start_date'])) {
+            $query->where('recorded_at', '>=', $filters['start_date']);
+        }
+
+        if (isset($filters['end_date'])) {
+            $query->where('recorded_at', '<=', $filters['end_date']);
+        }
+
+        $query->addSelect('city', 'temperature', 'feels_like', 'weather_description', 'wind_speed', 'wind_direction', 'chance_of_rain', 'recorded_at');
+
+        return $query->orderBy('recorded_at', 'desc')->paginate($perPage);
     }
 }

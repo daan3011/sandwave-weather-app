@@ -7,10 +7,7 @@ use App\Interfaces\Services\WeatherMonitorServiceInterface;
 
 uses(RefreshDatabase::class);
 
-const PER_PAGE = 15;
-
 beforeEach(function () {
-    // Mock the WeatherMonitorServiceInterface
     $this->weatherMonitorService = Mockery::mock(WeatherMonitorServiceInterface::class);
     $this->app->instance(WeatherMonitorServiceInterface::class, $this->weatherMonitorService);
 });
@@ -23,22 +20,22 @@ test('index returns a list of weather monitors', function () {
     $weatherMonitors = WeatherMonitor::factory()->count(3)->make();
 
     $currentPage = 1;
+    $perPage = 15;
     $paginator = new LengthAwarePaginator(
         $weatherMonitors,
         $weatherMonitors->count(),
-        PER_PAGE,
+        $perPage,
         $currentPage
     );
 
     $this->weatherMonitorService
         ->shouldReceive('listWeatherMonitors')
-        ->with(PER_PAGE)
+        ->with($perPage)
         ->once()
         ->andReturn($paginator);
 
     $response = $this->getJson('/api/weather-monitors');
 
-    // Assert the response
     $response->assertStatus(200)
              ->assertJsonCount(3, 'data');
 });
@@ -46,16 +43,17 @@ test('index returns a list of weather monitors', function () {
 test('index returns empty list when no weather monitors exist', function () {
     $totalItems = 0;
     $currentPage = 1;
+    $perPage = 15;
     $emptyPaginator = new LengthAwarePaginator(
         collect([]),
         $totalItems,
-        PER_PAGE,
+        $perPage,
         $currentPage
     );
 
     $this->weatherMonitorService
         ->shouldReceive('listWeatherMonitors')
-        ->with(PER_PAGE)
+        ->with($perPage)
         ->once()
         ->andReturn($emptyPaginator);
 

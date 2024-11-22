@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class WeatherReading extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'weather_monitor_id',
         'city',

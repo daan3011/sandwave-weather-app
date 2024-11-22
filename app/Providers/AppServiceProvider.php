@@ -4,13 +4,15 @@ namespace App\Providers;
 
 use App\Services\OpenWeatherMapService;
 use App\Services\WeatherMonitorService;
+use App\Services\WeatherReadingService;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\WeatherMonitorRepository;
+use App\Repositories\WeatherReadingRepository;
 use App\Interfaces\Services\OpenWeatherMapServiceInterface;
 use App\Interfaces\Services\WeatherMonitorServiceInterface;
+use App\Interfaces\Services\WeatherReadingServiceInterface;
 use App\Interfaces\Repositories\WeatherMonitorRepositoryInterface;
 use App\Interfaces\Repositories\WeatherReadingRepositoryInterface;
-use App\Repositories\WeatherReadingRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,6 +24,7 @@ class AppServiceProvider extends ServiceProvider
         // Services
         $this->app->bind(OpenWeatherMapServiceInterface::class, OpenWeatherMapService::class);
         $this->app->bind(WeatherMonitorServiceInterface::class, WeatherMonitorService::class);
+        $this->app->bind(WeatherReadingServiceInterface::class, WeatherReadingService::class);
 
         // Repositories
         $this->app->bind(WeatherMonitorRepositoryInterface::class, WeatherMonitorRepository::class);

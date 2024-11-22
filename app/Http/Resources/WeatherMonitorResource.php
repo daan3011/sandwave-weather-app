@@ -22,8 +22,6 @@ class WeatherMonitorResource extends JsonResource
             'longitude'        => $this->longitude,
             'interval_minutes' => $this->interval_minutes,
             'next_run_at'      => $this->next_run_at,
-            'created_at'       => $this->created_at,
-            'updated_at'       => $this->updated_at,
         ];
     }
 }
