@@ -7,7 +7,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use App\Interfaces\Services\OpenWeatherMapServiceInterface;
 use App\Interfaces\Repositories\WeatherMonitorRepositoryInterface;
-use App\Interfaces\Repositories\WeatherReadingRepositoryInterface;
+use App\Interfaces\Services\WeatherReadingServiceInterface;
 
 class FetchWeatherUpdatesCommand extends Command
 {
@@ -16,17 +16,17 @@ class FetchWeatherUpdatesCommand extends Command
 
     protected $weatherService;
     protected $weatherMonitorRepository;
-    protected $weatherReadingRepository;
+    protected $weatherReadingService;
 
     public function __construct(
         OpenWeatherMapServiceInterface $weatherService,
         WeatherMonitorRepositoryInterface $weatherMonitorRepository,
-        WeatherReadingRepositoryInterface $weatherReadingRepository
+        WeatherReadingServiceInterface $weatherReadingService
     ) {
         parent::__construct();
         $this->weatherService = $weatherService;
         $this->weatherMonitorRepository = $weatherMonitorRepository;
-        $this->weatherReadingRepository = $weatherReadingRepository;
+        $this->weatherReadingService = $weatherReadingService;
     }
 
     public function handle()
@@ -50,7 +50,7 @@ class FetchWeatherUpdatesCommand extends Command
             $weatherData = $this->weatherService->getCurrentWeather($monitor->city);
             $processedData = $this->weatherService->extractWeatherData($weatherData);
 
-            $this->weatherReadingRepository->create([
+            $this->weatherReadingService->createWeatherReading([
                 'weather_monitor_id'  => $monitor->id,
                 'city'                => $monitor->city,
                 'temperature'         => $processedData['temperature'],
