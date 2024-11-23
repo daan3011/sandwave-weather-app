@@ -22,6 +22,9 @@
       return {
         conditions: [
           { label: 'Real Feel', value: '30°C', icon: '☀️' },
+          { label: 'Real Feel', value: '30°C', icon: '☀️' },
+          { label: 'Real Feel', value: '30°C', icon: '☀️' },
+          { label: 'Real Feel', value: '30°C', icon: '☀️' },
           // Add more conditions
         ],
       };

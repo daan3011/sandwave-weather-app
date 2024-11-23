@@ -24,6 +24,10 @@
           { time: '6AM', icon: '☀️', temp: '25°C' },
           { time: '9AM', icon: '☀️', temp: '28°C' },
           { time: '12PM', icon: '🌤️', temp: '30°C' },
+          { time: '6AM', icon: '☀️', temp: '25°C' },
+          { time: '9AM', icon: '☀️', temp: '28°C' },
+          { time: '9AM', icon: '☀️', temp: '28°C' },
+          { time: '12PM', icon: '🌤️', temp: '30°C' },
           // Add more forecasts
         ],
       };
