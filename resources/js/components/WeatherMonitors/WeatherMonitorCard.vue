@@ -1,9 +1,12 @@
 <template>
-    <div class="bg-[#212B3C] p-5 rounded-xl w-full sm:w-[48%] lg:w-[30%] relative">
+    <div
+      class="bg-[#212B3C] p-5 rounded-xl w-full sm:w-[48%] lg:w-[30%] relative cursor-pointer"
+      @click="navigateToDetails"
+    >
       <!-- Trash Can Icon -->
       <button
         class="absolute top-2 right-2 text-gray-400 hover:text-red-500"
-        @click="handleDelete"
+        @click.stop="handleDelete"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -50,6 +53,9 @@
     methods: {
       handleDelete() {
         this.$emit("delete", this.monitor.id);
+      },
+      navigateToDetails() {
+        this.$router.push({ name: "WeatherMonitorReadings", params: { id: this.monitor.id } });
       },
     },
   };

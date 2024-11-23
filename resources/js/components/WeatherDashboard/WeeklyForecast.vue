@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-[#212B3C] w-full lg:w-[25%] p-8 rounded-xl flex-shrink-0">
+    <div class="bg-[#212B3C] w-full p-8 rounded-xl flex-1">
       <h3 class="font-medium text-gray-500 uppercase">7-Day Forecast</h3>
       <div class="flex flex-col">
         <ForecastRow
