@@ -1,46 +1,32 @@
 <template>
     <div class="flex flex-col w-full h-full p-5 bg-[#0C121E] text-white">
       <!-- Header -->
-      <div class="flex justify-between items-center bg-[#212B3C] p-4 rounded-xl">
-        <h1 class="text-2xl font-bold">{{ monitor.city }} ({{ monitor.country }})</h1>
-        <button class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg" @click="goBack">
-          Back
-        </button>
+      <div class="flex-none bg-[#212B3C] p-4 rounded-xl">
+        <div class="flex justify-between items-center">
+          <h1 class="text-2xl font-bold">{{ monitor.city }} ({{ monitor.country }})</h1>
+          <button
+            class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg"
+            @click="goBack"
+          >
+            Back
+          </button>
+        </div>
       </div>
 
       <!-- Main Content -->
-      <div class="flex flex-col h-full">
+      <div class="flex flex-col flex-grow overflow-hidden mt-4">
         <!-- Map Section -->
-        <div id="map" class="h-1/3 rounded-xl bg-gray-700"></div>
+        <div id="map" class="h-1/3 rounded-xl bg-gray-700 flex-none"></div>
 
         <!-- Monitored Data Section -->
-        <div class="flex-grow overflow-y-auto pt-4" @scroll="handleScroll" ref="scrollContainer">
-          <!-- Filter Section -->
-          <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-semibold">Monitored Readings</h2>
-            <div class="flex items-center gap-2">
-              <input
-                type="date"
-                v-model="startDate"
-                class="bg-[#212B3C] text-white px-3 py-2 rounded-lg focus:outline-none"
-              />
-              <input
-                type="date"
-                v-model="endDate"
-                class="bg-[#212B3C] text-white px-3 py-2 rounded-lg focus:outline-none"
-              />
-              <button
-                @click="filterReadings"
-                class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg"
-              >
-                Filter
-              </button>
-            </div>
-          </div>
-
-          <div v-if="filteredReadings.length > 0" class="flex flex-wrap gap-5 p-2">
+        <div
+          class="flex-grow overflow-y-auto pt-4"
+          @scroll="handleScroll"
+          ref="scrollContainer"
+        >
+          <div v-if="weatherReadings.length > 0" class="flex flex-wrap gap-5 p-2">
             <div
-              v-for="(reading, index) in filteredReadings"
+              v-for="(reading, index) in weatherReadings"
               :key="index"
               class="bg-[#212B3C] p-5 rounded-xl w-full sm:w-[48%] lg:w-[30%]"
             >
@@ -79,18 +65,15 @@
   } from "../services/weatherMonitorReadingsService";
 
   export default {
-    props: ["id"],
+    props: ["id"], // Receives monitor ID from route params
     data() {
       return {
-        monitor: {},
-        weatherReadings: [],
-        filteredReadings: [],
-        startDate: "",
-        endDate: "",
-        currentPage: 1,
-        perPage: 10,
-        isLoading: false,
-        hasMore: true,
+        monitor: {}, // Monitor details
+        weatherReadings: [], // Monitored data
+        currentPage: 1, // Current page
+        perPage: 10, // Items per page
+        isLoading: false, // Loading state
+        hasMore: true, // Whether more data is available
       };
     },
     methods: {
@@ -108,9 +91,8 @@
 
         this.isLoading = true;
         try {
-          const response = await fetchWeatherMonitorReadings(this.id, this.currentPage, this.perPage, this.startDate, this.endDate);
+          const response = await fetchWeatherMonitorReadings(this.id, this.currentPage, this.perPage);
           this.weatherReadings = [...this.weatherReadings, ...response.data];
-          this.filteredReadings = this.weatherReadings;
           this.hasMore = response.data.length >= this.perPage;
           this.currentPage += 1;
         } catch (error) {
@@ -120,12 +102,12 @@
           this.isLoading = false;
         }
       },
-      filterReadings() {
-        this.currentPage = 1;
-        this.weatherReadings = [];
-        this.fetchWeatherReadings();
-      },
       initMap() {
+        if (!this.monitor.latitude || !this.monitor.longitude) {
+          console.error("Missing latitude or longitude for monitor");
+          return;
+        }
+
         const map = L.map("map").setView([this.monitor.latitude, this.monitor.longitude], 13);
         L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -136,11 +118,17 @@
           .bindPopup(this.monitor.city || "Location")
           .openPopup();
       },
+      handleScroll() {
+        const container = this.$refs.scrollContainer;
+        if (container.scrollTop + container.clientHeight >= container.scrollHeight - 10) {
+          this.fetchWeatherReadings();
+        }
+      },
       formatTimestamp(timestamp) {
         return new Date(timestamp).toLocaleString();
       },
       goBack() {
-        this.$router.push("/weather-monitors");
+        this.$router.push("/");
       },
     },
     async mounted() {
@@ -149,3 +137,10 @@
     },
   };
   </script>
+
+  <style>
+  /* Ensure Leaflet map takes full width and height */
+  #map {
+    width: 100%;
+  }
+  </style>
