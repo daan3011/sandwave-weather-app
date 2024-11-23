@@ -16,11 +16,14 @@
       <!-- Main Content -->
       <div class="flex flex-col flex-grow overflow-hidden mt-4">
         <!-- Map Section -->
-        <div id="map" class="h-1/3 rounded-xl bg-gray-700 flex-none"></div>
+         <div class="max-h-[300px]">
+            <div id="map" class="h-[300px] rounded-xl bg-gray-700 flex-none"></div>
+
+         </div>
 
         <!-- Monitored Data Section -->
         <div
-          class="flex-grow overflow-y-auto pt-4"
+          class="flex-grow overflow-y-auto pt-4 h-[500px]"
           @scroll="handleScroll"
           ref="scrollContainer"
         >
