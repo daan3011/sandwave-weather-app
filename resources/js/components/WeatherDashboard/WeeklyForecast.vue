@@ -25,6 +25,11 @@
           { day: 'Today', icon: '☀️', condition: 'Sunny', tempRange: '33/44' },
           { day: 'Monday', icon: '🌦️', condition: 'Cloudy', tempRange: '30/40' },
           { day: 'Tuesday', icon: '☁️', condition: 'Overcast', tempRange: '28/38' },
+          { day: 'Wednesday', icon: '🌧️', condition: 'Rainy', tempRange: '25/35' },
+          { day: 'Thursday', icon: '🌧️', condition: 'Rainy', tempRange: '25/35' },
+          { day: 'Friday', icon: '🌧️', condition: 'Rainy', tempRange: '25/35' },
+          { day: 'Saturday', icon: '🌧️', condition: 'Rainy', tempRange: '25/35' },
+          { day: 'Sunday', icon: '🌧️', condition: 'Rainy', tempRange: '25/35' },
           // Add more forecasts
         ],
       };

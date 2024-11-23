@@ -1,5 +1,128 @@
 <template>
-    <div class="p-4 bg-red-500 text-white">
-        <h1>Weather monitors</h1>
+    <div class="flex flex-col gap-5 w-full h-full">
+      <!-- Header -->
+      <div class="flex justify-between items-center bg-[#212B3C] p-4 rounded-xl">
+        <h1 class="text-2xl font-bold">Weather Monitors</h1>
+        <button
+          class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg"
+          @click="openCreateMonitorModal"
+        >
+          Create weather monitor
+        </button>
+      </div>
+
+      <!-- Loading State -->
+      <div v-if="isLoading" class="flex justify-center items-center h-full">
+        <p class="text-white text-lg">Loading weather monitors...</p>
+      </div>
+
+      <!-- Monitors List -->
+      <div v-if="!isLoading && weatherMonitors.length > 0" class="flex flex-wrap gap-5">
+        <WeatherMonitorCard
+          v-for="monitor in weatherMonitors"
+          :key="monitor.id"
+          :monitor="monitor"
+          @delete="openDeleteModal"
+        />
+      </div>
+
+      <!-- No Monitors Overlay -->
+      <div
+        v-else-if="!isLoading && weatherMonitors.length === 0"
+        class="flex flex-col items-center justify-center bg-[#212B3C] p-10 rounded-xl h-60"
+      >
+        <p class="text-xl font-medium mb-4">There are no weather monitors created yet</p>
+        <button
+          class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-lg"
+          @click="openCreateMonitorModal"
+        >
+          Create weather monitor
+        </button>
+      </div>
+
+      <!-- Create Monitor Modal -->
+      <CreateMonitorModal
+        v-if="isCreateModalOpen"
+        :is-visible="isCreateModalOpen"
+        @close="closeCreateMonitorModal"
+        @create="handleCreateMonitor"
+      />
+
+      <!-- Delete Monitor Modal -->
+      <DeleteMonitorModal
+        v-if="isDeleteModalOpen"
+        :is-visible="isDeleteModalOpen"
+        @close="closeDeleteModal"
+        @confirm="confirmDelete"
+      />
     </div>
-</template>
+  </template>
+
+  <script>
+  import { fetchWeatherMonitors, createWeatherMonitor, deleteWeatherMonitor } from "../services/weatherMonitorsService";
+  import WeatherMonitorCard from "../components/WeatherMonitors/WeatherMonitorCard.vue";
+  import CreateMonitorModal from "../components/WeatherMonitors/CreateMonitorModal.vue";
+  import DeleteMonitorModal from "../components/WeatherMonitors/DeleteMonitorModal.vue";
+
+  export default {
+    components: { WeatherMonitorCard, CreateMonitorModal, DeleteMonitorModal },
+    data() {
+      return {
+        weatherMonitors: [],
+        isLoading: true,
+        isCreateModalOpen: false,
+        isDeleteModalOpen: false,
+        monitorToDelete: null,
+      };
+    },
+    methods: {
+      async loadWeatherMonitors() {
+        this.isLoading = true;
+        try {
+          const response = await fetchWeatherMonitors();
+          this.weatherMonitors = response.data || [];
+        } catch (error) {
+          console.error("Error loading weather monitors:", error);
+        } finally {
+          this.isLoading = false;
+        }
+      },
+      openCreateMonitorModal() {
+        this.isCreateModalOpen = true;
+      },
+      closeCreateMonitorModal() {
+        this.isCreateModalOpen = false;
+      },
+      async handleCreateMonitor(monitor) {
+        try {
+          await createWeatherMonitor(monitor);
+          this.loadWeatherMonitors();
+          this.closeCreateMonitorModal();
+        } catch (error) {
+          console.error("Error creating weather monitor:", error);
+        }
+      },
+      openDeleteModal(monitorId) {
+        this.isDeleteModalOpen = true;
+        this.monitorToDelete = monitorId;
+      },
+      closeDeleteModal() {
+        this.isDeleteModalOpen = false;
+        this.monitorToDelete = null;
+      },
+      async confirmDelete() {
+        try {
+          await deleteWeatherMonitor(this.monitorToDelete);
+          this.weatherMonitors = this.weatherMonitors.filter((monitor) => monitor.id !== this.monitorToDelete);
+        } catch (error) {
+          console.error("Error deleting weather monitor:", error);
+        } finally {
+          this.closeDeleteModal();
+        }
+      },
+    },
+    mounted() {
+      this.loadWeatherMonitors();
+    },
+  };
+  </script>
