@@ -22,6 +22,10 @@ class WeatherReading extends Model
         'recorded_at',
     ];
 
+    protected $casts = [
+        'recorded_at' => 'datetime',
+    ];
+
     public function weatherMonitor() : BelongsTo
     {
         return $this->belongsTo(WeatherMonitor::class);

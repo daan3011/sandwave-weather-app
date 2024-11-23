@@ -23,7 +23,7 @@ class WeatherReadingResource extends JsonResource
             'wind_speed'          => $this->wind_speed,
             'wind_direction'      => $this->wind_direction,
             'chance_of_rain'      => $this->chance_of_rain,
-            'recorded_at'         => $this->recorded_at,
+            'recorded_at'         => $this->recorded_at->format('d-m-Y H:i'),
         ];
     }
 }

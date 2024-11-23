@@ -23,7 +23,7 @@ class StoreWeatherMonitorRequest extends FormRequest
     {
         return [
             'city'             => 'required|string|max:255',
-            'interval_minutes' => 'required|integer|min:30',
+            'interval_minutes' => 'required|integer|min:5|max:1440',
         ];
     }
 }
