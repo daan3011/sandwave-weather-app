@@ -18,7 +18,7 @@
         </li>
         <li class="font-bold flex flex-col gap-2 items-center">
           <router-link
-            to="/monitors"
+            to="/weather-monitors"
             class="text-white no-underline hover:text-gray-400"
           >
             <span class="text-2xl pr-4">📡</span>
