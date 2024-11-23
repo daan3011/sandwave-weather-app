@@ -21,9 +21,9 @@
             <div class="flex justify-between items-center my-4">
                 <h2 class="text-xl font-semibold">Monitored Weather Readings</h2>
                 <div class="flex items-center gap-2">
-                    <input type="date" v-model="startDate"
+                    <input type="datetime-local" v-model="startDateTime"
                         class="bg-[#212B3C] text-white px-3 py-2 rounded-lg focus:outline-none" />
-                    <input type="date" v-model="endDate"
+                    <input type="datetime-local" v-model="endDateTime"
                         class="bg-[#212B3C] text-white px-3 py-2 rounded-lg focus:outline-none" />
                     <button @click="filterReadings"
                         class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg">
@@ -37,7 +37,7 @@
                 <div v-if="weatherReadings.length > 0" class="flex flex-wrap gap-5 p-2">
                     <div v-for="(reading, index) in weatherReadings" :key="index"
                         class="bg-[#212B3C] p-5 rounded-xl w-full sm:w-[48%] lg:w-[30%]">
-                        <h3 class="text-lg font-semibold mb-2">Recorded At: {{ formatTimestamp(reading.recorded_at) }}
+                        <h3 class="text-md font-semibold mb-2">Recorded At: {{ formatDate(reading.recorded_at) }}
                         </h3>
                         <p class="text-gray-400 text-sm mb-2">Temperature: {{ reading.temperature }}°C</p>
                         <p class="text-gray-400 text-sm mb-2">Feels Like: {{ reading.feels_like }}°C</p>
@@ -82,8 +82,8 @@ export default {
             perPage: 10, // Items per page
             isLoading: false, // Loading state
             hasMore: true, // Whether more data is available
-            startDate: null, // Start date filter
-            endDate: null, // End date filter
+            startDateTime: null, // Start date-time filter
+            endDateTime: null, // End date-time filter
         };
     },
     methods: {
@@ -111,8 +111,8 @@ export default {
                     this.id,
                     this.currentPage,
                     this.perPage,
-                    this.startDate,
-                    this.endDate
+                    this.startDateTime,
+                    this.endDateTime
                 );
                 this.weatherReadings = [...this.weatherReadings, ...response.data];
                 this.hasMore = response.data.length >= this.perPage;
@@ -151,6 +151,26 @@ export default {
         },
         formatTimestamp(timestamp) {
             return new Date(timestamp).toLocaleString();
+        },
+        formatDate(datetime) {
+            if (!datetime) return 'Invalid Date';
+
+            // Reformat "23-11-2024 21:52" to "2024-11-23T21:52"
+            const [datePart, timePart] = datetime.split(' ');
+            const [day, month, year] = datePart.split('-');
+            const isoFormatted = `${year}-${month}-${day}T${timePart}`;
+            const dateObject = new Date(isoFormatted);
+
+            // Format using Intl.DateTimeFormat
+            return new Intl.DateTimeFormat('en-US', {
+                weekday: 'short',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+                hour12: true,
+            }).format(dateObject);
         },
         goBack() {
             this.$router.push("/weather-monitors");

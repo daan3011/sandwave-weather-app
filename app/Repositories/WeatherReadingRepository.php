@@ -2,9 +2,11 @@
 
 namespace App\Repositories;
 
-use App\Interfaces\Repositories\WeatherReadingRepositoryInterface;
 use App\Models\WeatherReading;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use App\Interfaces\Repositories\WeatherReadingRepositoryInterface;
 
 class WeatherReadingRepository implements WeatherReadingRepositoryInterface
 {
@@ -29,8 +31,18 @@ class WeatherReadingRepository implements WeatherReadingRepositoryInterface
             $query->where('recorded_at', '<=', $filters['end_date']);
         }
 
-        $query->addSelect('city', 'temperature', 'feels_like', 'weather_description', 'wind_speed', 'wind_direction', 'chance_of_rain', 'recorded_at');
+        $query->addSelect([
+            'city',
+            'temperature',
+            'feels_like',
+            'weather_description',
+            'wind_speed',
+            'wind_direction',
+            'chance_of_rain',
+            'recorded_at',
+        ]);
 
         return $query->orderBy('recorded_at', 'desc')->paginate($perPage);
     }
+
 }

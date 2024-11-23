@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use App\Http\Resources\WeatherReadingResource;
-use App\Http\Requests\WeatherReadingFilterRequest;
+use App\Http\Requests\ListWeatherReadingsRequest;
 use App\Interfaces\Services\WeatherReadingServiceInterface;
 
 class WeatherReadingController extends Controller
@@ -18,7 +18,7 @@ class WeatherReadingController extends Controller
         $this->weatherReadingService = $weatherReadingService;
     }
 
-    public function index(WeatherReadingFilterRequest $request): JsonResponse
+    public function index(ListWeatherReadingsRequest $request): JsonResponse
     {
         $filters = $request->validated();
 
