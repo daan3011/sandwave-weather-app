@@ -1,5 +1,7 @@
 <template>
-    <div id="map" class="h-1/3 rounded-xl bg-gray-700"></div>
+    <div class="max-h-[300px]">
+      <div id="map" class="h-[300px] rounded-xl bg-gray-700 flex-none"></div>
+    </div>
   </template>
 
   <script>
@@ -8,25 +10,58 @@
 
   export default {
     props: {
-      latitude: Number,
-      longitude: Number,
-      city: String,
+      latitude: {
+        type: Number,
+        required: true,
+      },
+      longitude: {
+        type: Number,
+        required: true,
+      },
+    },
+    data() {
+      return {
+        map: null, // Store the Leaflet map instance
+        marker: null, // Store the Leaflet marker instance
+      };
+    },
+    watch: {
+      // Watch for changes in latitude or longitude
+      latitude: "updateMap",
+      longitude: "updateMap",
     },
     mounted() {
-      if (!this.latitude || !this.longitude) {
-        console.error("Missing latitude or longitude for monitor");
-        return;
-      }
+      this.initializeMap();
+    },
+    methods: {
+      initializeMap() {
+        if (!this.latitude || !this.longitude) {
+          console.error("Missing latitude or longitude for map initialization.");
+          return;
+        }
 
-      const map = L.map("map").setView([this.latitude, this.longitude], 13);
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      }).addTo(map);
+        // Initialize map
+        this.map = L.map("map").setView([this.latitude, this.longitude], 13);
+        L.tileLayer(
+          "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}"
+        ).addTo(this.map);
 
-      L.marker([this.latitude, this.longitude])
-        .addTo(map)
-        .bindPopup(this.city || "Location")
-        .openPopup();
+        // Add marker
+        this.marker = L.marker([this.latitude, this.longitude])
+          .addTo(this.map)
+          .bindPopup("Monitor Location")
+          .openPopup();
+      },
+      updateMap() {
+        if (this.map && this.marker) {
+          // Update marker position
+          this.marker.setLatLng([this.latitude, this.longitude]);
+
+          this.map.setView([this.latitude, this.longitude], 13);
+        } else {
+          this.initializeMap();
+        }
+      },
     },
   };
   </script>
