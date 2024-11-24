@@ -21,6 +21,7 @@ return new class extends Migration
             $table->float('wind_speed');
             $table->integer('wind_direction');
             $table->float('chance_of_rain')->nullable();
+            $table->string('weather_code')->nullable();
             $table->timestamp('recorded_at');
             $table->timestamps();
         });

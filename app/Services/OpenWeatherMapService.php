@@ -12,8 +12,8 @@ class OpenWeatherMapService implements OpenWeatherMapServiceInterface
 
     public function __construct()
     {
-        $this->apiKey = config('weather-apis.providers.openweathermap.api_key');
-        $this->apiUrl = config('weather-apis.providers.openweathermap.api_url');
+        $this->apiKey = config('weather_apis.providers.openweathermap.api_key');
+        $this->apiUrl = config('weather_apis.providers.openweathermap.api_url');
     }
 
     public function getCurrentWeather(string $city): array
@@ -69,6 +69,7 @@ class OpenWeatherMapService implements OpenWeatherMapServiceInterface
             'wind_speed'          => $weatherData['wind']['speed'],
             'wind_direction'      => $weatherData['wind']['deg'],
             'chance_of_rain'      => $this->calculateChanceOfRain($weatherData),
+            'weather_code'        => $weatherData['weather'][0]['id'],
             'recorded_at'         => now(),
         ];
     }

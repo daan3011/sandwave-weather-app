@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Interfaces\Services\WeatherIconServiceInterface;
 
 class WeatherReading extends Model
 {
@@ -19,6 +20,7 @@ class WeatherReading extends Model
         'wind_speed',
         'wind_direction',
         'chance_of_rain',
+        'weather_code',
         'recorded_at',
     ];
 
@@ -29,5 +31,12 @@ class WeatherReading extends Model
     public function weatherMonitor() : BelongsTo
     {
         return $this->belongsTo(WeatherMonitor::class);
+    }
+
+    public function getIconAttribute(): string
+    {
+        /** @var WeatherIconServiceInterface $service */
+        $service = app(WeatherIconServiceInterface::class);
+        return $service->getIcon($this->weather_code);
     }
 }
