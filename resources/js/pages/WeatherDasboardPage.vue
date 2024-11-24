@@ -12,8 +12,9 @@
           <SearchForm @search="handleSearch" />
           <WeatherOverview
             :city="weatherData.city"
-            :weather-description="weatherData.weather_description"
-            :temperature="weatherData.current_temperature"
+            :weatherDescription="weatherData.current_weather.weather_description"
+            :temperature="weatherData.current_weather.temperature"
+            :icon="weatherData.current_weather.icon"
           />
           <TodayForecast :forecasts="weatherData.todays_forecast" />
           <AirCondition :conditions="weatherData.air_conditions" />
@@ -56,6 +57,7 @@ export default {
                 todays_forecast: [],
                 air_conditions: [],
                 five_day_forecast: [],
+                icon : "☁️",
             },
             isLoading: true, // Track loading state
         };
