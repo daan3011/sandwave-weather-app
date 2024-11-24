@@ -47,7 +47,7 @@
     },
     computed: {
       formattedNextRun() {
-        return new Date(this.monitor.next_run_at).toLocaleString();
+        return this.formatDate(this.monitor.next_run_at);
       },
     },
     methods: {
@@ -55,7 +55,32 @@
         this.$emit("delete", this.monitor.id);
       },
       navigateToDetails() {
-        this.$router.push({ name: "WeatherMonitorReadings", params: { id: this.monitor.id } });
+        this.$router.push({
+          name: "WeatherMonitorReadings",
+          params: { id: this.monitor.id },
+        });
+      },
+      formatDate(datetime) {
+        if (!datetime) return "Invalid Date";
+
+        try {
+          const [datePart, timePart] = datetime.split(" ");
+          const [day, month, year] = datePart.split("-");
+          const isoFormatted = `${year}-${month}-${day}T${timePart}`;
+          const dateObject = new Date(isoFormatted);
+
+          return new Intl.DateTimeFormat("en-US", {
+            weekday: "short",
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            hour12: false,
+          }).format(dateObject);
+        } catch (error) {
+          return "Invalid Date";
+        }
       },
     },
   };

@@ -19,6 +19,10 @@ class WeatherMonitor extends Model
         'next_run_at',
     ];
 
+    protected $casts = [
+        'next_run_at' => 'datetime',
+    ];
+
     public function weatherReadings() : HasMany
     {
         return $this->hasMany(WeatherReading::class);
