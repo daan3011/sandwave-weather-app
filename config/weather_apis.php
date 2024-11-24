@@ -14,7 +14,7 @@ return [
     'providers' => [
         'openweathermap' => [
             'api_url' => env('OPENWEATHERMAP_API_URL') ?? 'http://api.openweathermap.org/data/2.5',
-            'api_key' => env('OPENWEATHERMAP_API_KEY'),
+            'api_key' => env('OPENWEATHERMAP_API_KEY') ?? null,
         ],
     ],
 

@@ -59,6 +59,7 @@ class FetchWeatherUpdatesCommand extends Command
                 'wind_speed'          => $processedData['wind_speed'],
                 'wind_direction'      => $processedData['wind_direction'],
                 'chance_of_rain'      => $processedData['chance_of_rain'],
+                'weather_code'        => $processedData['weather_code'],
                 'recorded_at'         => $processedData['recorded_at'],
             ]);
 
