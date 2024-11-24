@@ -8,8 +8,6 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-// use Mockery;
-
 uses(RefreshDatabase::class);
 uses(TestCase::class);
 
