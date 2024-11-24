@@ -39,6 +39,7 @@ class WeatherReadingRepository implements WeatherReadingRepositoryInterface
             'wind_speed',
             'wind_direction',
             'chance_of_rain',
+            'weather_code',
             'recorded_at',
         ]);
 
