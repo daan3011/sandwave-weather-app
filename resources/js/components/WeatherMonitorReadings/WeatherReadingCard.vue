@@ -75,7 +75,7 @@ export default {
                 day: "numeric",
                 hour: "numeric",
                 minute: "numeric",
-                hour12: true,
+                hour12: false,
             }).format(dateObject);
         },
     },
