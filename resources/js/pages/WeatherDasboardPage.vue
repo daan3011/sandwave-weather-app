@@ -39,6 +39,8 @@ import TodayForecast from "../components/WeatherDashboard/TodayForecast.vue";
 import AirCondition from "../components/WeatherDashboard/AirCondition.vue";
 import WeeklyForecast from "../components/WeatherDashboard/WeeklyForecast.vue";
 import apiClient from "../services/http";
+import { fetchWeatherData } from "../services/weatherOverviewService";
+
 
 export default {
     components: {
@@ -66,7 +68,7 @@ export default {
         async fetchWeather(city) {
             this.isLoading = true;
             try {
-                const response = await apiClient.get(`/weather`, { params: { city } });
+                const response = await fetchWeatherData(city);
                 this.weatherData = response.data;
             } catch (error) {
                 console.error("Failed to fetch weather data:", error);
