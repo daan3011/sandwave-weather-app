@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\WeatherReading;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use App\Interfaces\Services\OpenWeatherMapServiceInterface;
 use App\Interfaces\Services\WeatherReadingServiceInterface;
 use App\Interfaces\Repositories\WeatherReadingRepositoryInterface;
 

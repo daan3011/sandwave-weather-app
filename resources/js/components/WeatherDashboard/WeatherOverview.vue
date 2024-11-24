@@ -1,5 +1,11 @@
 <template>
-    <div class="px-6 py-8 bg-[#212B3C] rounded-xl">
+    <div class="px-6 py-8 bg-[#212B3C] rounded-xl flex items-center gap-6">
+      <!-- Icon Section -->
+      <div v-if="icon" class="text-6xl">
+        {{ icon }}
+      </div>
+
+      <!-- Weather Info Section -->
       <div class="flex flex-col gap-6">
         <div>
           <h1 class="text-3xl">{{ city }}</h1>
@@ -13,9 +19,22 @@
   <script>
   export default {
     props: {
-      city: String,
-      weatherDescription: String,
-      temperature: Number,
+      city: {
+        type: String,
+        required: true,
+      },
+      weatherDescription: {
+        type: String,
+        required: true,
+      },
+      temperature: {
+        type: Number,
+        required: true,
+      },
+      icon: {
+        type: String,
+        required: true,
+      },
     },
   };
   </script>

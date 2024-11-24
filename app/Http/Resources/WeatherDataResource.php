@@ -17,12 +17,22 @@ class WeatherDataResource extends BaseResource
     public function toArray($request)
     {
         return [
-            'city'                => $this->resource['city'],
-            'weather_description' => $this->resource['current_weather']['weather'][0]['description'] ?? null,
-            'current_temperature' => $this->resource['current_weather']['main']['temp'] ?? null,
-            'todays_forecast'     => $this->formatTodaysForecast($this->resource['forecast']),
-            'air_conditions'      => $this->formatAirConditions($this->resource['air_conditions']),
-            'five_day_forecast'   => $this->formatFiveDayForecast($this->resource['forecast']),
+            'city'            => $this->resource['city'],
+            'current_weather' => $this->formatCurrentWeather($this->resource['current_weather']),
+            'todays_forecast' => $this->formatTodaysForecast($this->resource['forecast']),
+            'air_conditions'  => $this->formatAirConditions($this->resource['air_conditions']),
+            'five_day_forecast' => $this->formatFiveDayForecast($this->resource['forecast']),
+        ];
+    }
+
+    protected function formatCurrentWeather($currentWeather)
+    {
+        $weatherCode = $currentWeather['weather'][0]['id'] ?? null;
+        return [
+            'temperature'         => $currentWeather['main']['temp'] ?? null,
+            'feels_like'          => $currentWeather['main']['feels_like'] ?? null,
+            'weather_description' => $currentWeather['weather'][0]['description'] ?? null,
+            'icon'                => $this->weatherIconService->getIcon($weatherCode),
         ];
     }
 
