@@ -235,15 +235,14 @@ test('getCombinedWeatherData returns combined weather data for a valid city', fu
     expect($result['air_conditions'])->toMatchArray($airConditionsResponse);
 });
 
-test('getCurrentWeather handles API errors gracefully', function () {
+test('getCurrentWeather throws an exception for API errors', function () {
     $city = 'InvalidCity';
 
     Http::fake([
-        'api.openweathermap.org/data/2.5/weather*' => Http::response([], Response::HTTP_NOT_FOUND),
+        'api.openweathermap.org/data/2.5/weather*' => Http::response([], Response::HTTP_UNPROCESSABLE_ENTITY),
     ]);
 
-    $result = $this->openWeatherMapService->getCurrentWeather($city);
-
-    expect($result)->toBeArray();
-    expect($result)->toBeEmpty();
+    $this->expectException(\App\Exceptions\FetchWeatherDataException::class);
+    $this->openWeatherMapService->getCurrentWeather($city);
 });
+
