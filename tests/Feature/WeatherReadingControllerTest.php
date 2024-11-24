@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Http\Response;
 use App\Models\WeatherMonitor;
 use App\Models\WeatherReading;
 use Illuminate\Support\Facades\App;
@@ -49,6 +50,6 @@ test('index returns weather readings with filters', function () {
 
     $response = $this->getJson('/api/weather-readings?' . http_build_query($filters));
 
-    $response->assertStatus(200)
-             ->assertJsonCount(3, 'data');
+    $response->assertStatus(Response::HTTP_OK)
+        ->assertJsonCount(3, 'data');
 });

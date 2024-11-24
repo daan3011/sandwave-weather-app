@@ -1,9 +1,10 @@
 <?php
 
-use App\Services\OpenWeatherMapService;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Http;
+use App\Services\OpenWeatherMapService;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 uses(TestCase::class);
@@ -35,7 +36,7 @@ test('getCurrentWeather returns weather data for a valid city', function () {
     ];
 
     Http::fake([
-        'api.openweathermap.org/data/2.5/weather*' => Http::response($mockResponse, 200),
+        'api.openweathermap.org/data/2.5/weather*' => Http::response($mockResponse, Response::HTTP_OK),
     ]);
 
     $result = $this->openWeatherMapService->getCurrentWeather($city);
@@ -68,7 +69,7 @@ test('getFiveDayForecast returns forecast data for a valid city', function () {
     ];
 
     Http::fake([
-        'api.openweathermap.org/data/2.5/forecast*' => Http::response($mockResponse, 200),
+        'api.openweathermap.org/data/2.5/forecast*' => Http::response($mockResponse, Response::HTTP_OK),
     ]);
 
     $result = $this->openWeatherMapService->getFiveDayForecast($city);
@@ -98,7 +99,7 @@ test('getAirConditions returns air pollution data for valid coordinates', functi
     ];
 
     Http::fake([
-        'api.openweathermap.org/data/2.5/air_pollution*' => Http::response($mockResponse, 200),
+        'api.openweathermap.org/data/2.5/air_pollution*' => Http::response($mockResponse, Response::HTTP_OK),
     ]);
 
     $result = $this->openWeatherMapService->getAirConditions($lat, $lon);
@@ -121,7 +122,7 @@ test('getCoordinates returns coordinates for a valid city', function () {
     ];
 
     Http::fake([
-        'api.openweathermap.org/geo/1.0/direct*' => Http::response($mockResponse, 200),
+        'api.openweathermap.org/geo/1.0/direct*' => Http::response($mockResponse, Response::HTTP_OK),
     ]);
 
     $result = $this->openWeatherMapService->getCoordinates($city);
@@ -137,7 +138,7 @@ test('getCoordinates returns empty array when city is not found', function () {
     $mockResponse = [];
 
     Http::fake([
-        'api.openweathermap.org/geo/1.0/direct*' => Http::response($mockResponse, 200),
+        'api.openweathermap.org/geo/1.0/direct*' => Http::response($mockResponse, Response::HTTP_OK),
     ]);
 
     $result = $this->openWeatherMapService->getCoordinates($city);
@@ -219,10 +220,10 @@ test('getCombinedWeatherData returns combined weather data for a valid city', fu
     ];
 
     Http::fake([
-        'api.openweathermap.org/geo/1.0/direct*'     => Http::response([$coordinatesResponse], 200),
-        'api.openweathermap.org/data/2.5/weather*'   => Http::response($currentWeatherResponse, 200),
-        'api.openweathermap.org/data/2.5/forecast*'  => Http::response($forecastResponse, 200),
-        'api.openweathermap.org/data/2.5/air_pollution*' => Http::response($airConditionsResponse, 200),
+        'api.openweathermap.org/geo/1.0/direct*'     => Http::response([$coordinatesResponse], Response::HTTP_OK),
+        'api.openweathermap.org/data/2.5/weather*'   => Http::response($currentWeatherResponse, Response::HTTP_OK),
+        'api.openweathermap.org/data/2.5/forecast*'  => Http::response($forecastResponse, Response::HTTP_OK),
+        'api.openweathermap.org/data/2.5/air_pollution*' => Http::response($airConditionsResponse, Response::HTTP_OK),
     ]);
 
     $result = $this->openWeatherMapService->getCombinedWeatherData($city);
@@ -238,7 +239,7 @@ test('getCurrentWeather handles API errors gracefully', function () {
     $city = 'InvalidCity';
 
     Http::fake([
-        'api.openweathermap.org/data/2.5/weather*' => Http::response([], 404),
+        'api.openweathermap.org/data/2.5/weather*' => Http::response([], Response::HTTP_NOT_FOUND),
     ]);
 
     $result = $this->openWeatherMapService->getCurrentWeather($city);

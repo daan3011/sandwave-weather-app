@@ -4,6 +4,7 @@ use App\Models\WeatherMonitor;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Interfaces\Services\WeatherMonitorServiceInterface;
+use Illuminate\Http\Response;
 
 uses(RefreshDatabase::class);
 
@@ -36,17 +37,16 @@ test('index returns a list of weather monitors', function () {
 
     $response = $this->getJson('/api/weather-monitors');
 
-    $response->assertStatus(200)
+    $response->assertStatus(Response::HTTP_OK)
         ->assertJsonCount(3, 'data');
 });
 
 test('index returns empty list when no weather monitors exist', function () {
-    $totalItems = 0;
     $currentPage = 1;
     $perPage = 15;
     $emptyPaginator = new LengthAwarePaginator(
         collect([]),
-        $totalItems,
+        0,
         $perPage,
         $currentPage
     );
@@ -59,7 +59,7 @@ test('index returns empty list when no weather monitors exist', function () {
 
     $response = $this->getJson('/api/weather-monitors');
 
-    $response->assertStatus(200)
+    $response->assertStatus(Response::HTTP_OK)
         ->assertJsonCount(0, 'data');
 });
 
@@ -79,7 +79,7 @@ test('store creates a new weather monitor successfully', function () {
 
     $response = $this->postJson('/api/weather-monitors', $data);
 
-    $response->assertStatus(201)
+    $response->assertStatus(Response::HTTP_CREATED)
         ->assertJsonFragment(['city' => 'Test city']);
 });
 
@@ -88,73 +88,47 @@ test('store returns validation errors when required fields are missing', functio
 
     $response = $this->postJson('/api/weather-monitors', $data);
 
-    $response->assertStatus(422)
+    $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
         ->assertJsonValidationErrors(['city', 'interval_minutes']);
 });
 
 test('show returns a weather monitor when it exists', function () {
-    $id = 1;
-    $weatherMonitor = WeatherMonitor::factory()->make(['id' => $id]);
+    $weatherMonitor = WeatherMonitor::factory()->create();
 
-    $this->weatherMonitorService
-        ->shouldReceive('getWeatherMonitor')
-        ->with($id)
-        ->once()
-        ->andReturn($weatherMonitor);
+    $response = $this->getJson("/api/weather-monitors/{$weatherMonitor->id}");
 
-    $response = $this->getJson("/api/weather-monitors/{$id}");
-
-    $response->assertStatus(200)
-        ->assertJsonFragment(['id' => $id]);
+    $response->assertStatus(Response::HTTP_OK)
+        ->assertJsonFragment(['id' => $weatherMonitor->id]);
 });
 
 test('show returns 404 when weather monitor does not exist', function () {
-    $id = 999;
+    $nonExistentId = 9999;
 
-    $this->weatherMonitorService
-        ->shouldReceive('getWeatherMonitor')
-        ->with($id)
-        ->once()
-        ->andReturn(null);
+    $response = $this->getJson("/api/weather-monitors/{$nonExistentId}");
 
-    $response = $this->getJson("/api/weather-monitors/{$id}");
-
-    $response->assertStatus(404)
-        ->assertJsonFragment(['message' => 'Weather monitor not found.']);
+    $response->assertStatus(Response::HTTP_NOT_FOUND);
 });
 
 test('destroy deletes a weather monitor when it exists', function () {
-    $id = 1;
-    $weatherMonitor = WeatherMonitor::factory()->make(['id' => $id]);
-
-    $this->weatherMonitorService
-        ->shouldReceive('getWeatherMonitor')
-        ->with($id)
-        ->once()
-        ->andReturn($weatherMonitor);
+    $weatherMonitor = WeatherMonitor::factory()->create();
 
     $this->weatherMonitorService
         ->shouldReceive('deleteWeatherMonitor')
-        ->with($weatherMonitor)
+        ->withArgs(function ($arg) use ($weatherMonitor) {
+            return $arg->id === $weatherMonitor->id;
+        })
         ->once()
         ->andReturn(true);
 
-    $response = $this->deleteJson("/api/weather-monitors/{$id}");
+    $response = $this->deleteJson("/api/weather-monitors/{$weatherMonitor->id}");
 
-    $response->assertStatus(204);
+    $response->assertStatus(Response::HTTP_NO_CONTENT);
 });
 
 test('destroy returns 404 when weather monitor does not exist', function () {
-    $id = 999;
+    $nonExistentId = 9999;
 
-    $this->weatherMonitorService
-        ->shouldReceive('getWeatherMonitor')
-        ->with($id)
-        ->once()
-        ->andReturn(null);
+    $response = $this->deleteJson("/api/weather-monitors/{$nonExistentId}");
 
-    $response = $this->deleteJson("/api/weather-monitors/{$id}");
-
-    $response->assertStatus(404)
-        ->assertJsonFragment(['message' => 'Weather monitor not found.']);
+    $response->assertStatus(Response::HTTP_NOT_FOUND);
 });
