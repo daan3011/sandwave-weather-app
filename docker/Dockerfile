@@ -15,6 +15,7 @@ RUN apk add --no-cache \
     sqlite-dev \
     nginx \
     gettext-dev \
+    supervisor \
     && docker-php-ext-configure zip \
     && docker-php-ext-install zip pdo pdo_mysql pdo_sqlite \
     && docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ \
@@ -30,25 +31,15 @@ COPY --from=composer:2.7.6 /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy application files
-COPY . .
+# Copy entrypoint script, supervisord configuration, and nginx configuration
+COPY ./docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# Set appropriate permissions for storage and cache
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 775 /var/www/html/storage \
-    && chmod -R 775 /var/www/html/bootstrap/cache \
-    && chmod -R 775 /var/www/html/vendor
-
-# Install PHP and Node.js dependencies
-RUN COMPOSER_ALLOW_SUPERUSER=1 composer install --prefer-dist \
-    && npm install \
-    && npm run build
-
-# Copy Nginx configuration
 COPY ./docker/nginx.conf /etc/nginx/http.d/default.conf
+COPY ./docker/supervisord.conf /etc/supervisord.conf
 
 # Expose port 80
 EXPOSE 80
 
 # Define entrypoint command
-CMD ["sh", "-c", "nginx && php-fpm"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
