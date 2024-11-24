@@ -1,0 +1,22 @@
+[
+    {"city": "Amsterdam", "country": "NL", "latitude": 52.3676, "longitude": 4.9041},
+    {"city": "Rotterdam", "country": "NL", "latitude": 51.9225, "longitude": 4.4792},
+    {"city": "The Hague", "country": "NL", "latitude": 52.0705, "longitude": 4.3007},
+    {"city": "Utrecht", "country": "NL", "latitude": 52.0907, "longitude": 5.1214},
+    {"city": "Eindhoven", "country": "NL", "latitude": 51.4416, "longitude": 5.4697},
+    {"city": "Tilburg", "country": "NL", "latitude": 51.5853, "longitude": 5.0567},
+    {"city": "Groningen", "country": "NL", "latitude": 53.2194, "longitude": 6.5665},
+    {"city": "Almere", "country": "NL", "latitude": 52.3508, "longitude": 5.2647},
+    {"city": "Breda", "country": "NL", "latitude": 51.5719, "longitude": 4.7683},
+    {"city": "Nijmegen", "country": "NL", "latitude": 51.8425, "longitude": 5.8528},
+    {"city": "Enschede", "country": "NL", "latitude": 52.2215, "longitude": 6.8937},
+    {"city": "Apeldoorn", "country": "NL", "latitude": 52.2112, "longitude": 5.9699},
+    {"city": "Haarlem", "country": "NL", "latitude": 52.3874, "longitude": 4.6462},
+    {"city": "Arnhem", "country": "NL", "latitude": 51.9851, "longitude": 5.8987},
+    {"city": "Amersfoort", "country": "NL", "latitude": 52.1561, "longitude": 5.3878},
+    {"city": "Zaanstad", "country": "NL", "latitude": 52.4576, "longitude": 4.7511},
+    {"city": "Haarlemmermeer", "country": "NL", "latitude": 52.3021, "longitude": 4.6733},
+    {"city": "Den Bosch", "country": "NL", "latitude": 51.6978, "longitude": 5.3037},
+    {"city": "Zwolle", "country": "NL", "latitude": 52.5168, "longitude": 6.0830},
+    {"city": "Leiden", "country": "NL", "latitude": 52.1601, "longitude": 4.4970}
+]
