@@ -78,4 +78,24 @@ class OpenWeatherMapService implements OpenWeatherMapServiceInterface
     {
         return $weatherData['pop'] ?? null;
     }
+
+    public function getCombinedWeatherData(string $city): array
+    {
+        $coordinates = $this->getCoordinates($city);
+
+        $lat = $coordinates['lat'];
+        $lon = $coordinates['lon'];
+
+        $currentWeather = $this->getCurrentWeather($city);
+        $forecast = $this->getFiveDayForecast($city);
+        $airConditions = $this->getAirConditions($lat, $lon);
+
+        return [
+            'city'             => $currentWeather['name'] ?? $city,
+            'current_weather'  => $currentWeather,
+            'forecast'         => $forecast,
+            'air_conditions'   => $airConditions,
+        ];
+    }
+
 }
