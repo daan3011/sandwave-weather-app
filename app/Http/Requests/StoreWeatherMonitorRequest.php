@@ -22,8 +22,18 @@ class StoreWeatherMonitorRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'city'             => 'required|string|max:255',
+            'city'             => 'required|string|max:255|unique:weather_monitors,city',
             'interval_minutes' => 'required|integer|min:5|max:1440',
         ];
     }
+
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('city')) {
+            $this->merge([
+                'city' => ucfirst(strtolower($this->city)),
+            ]);
+        }
+    }
 }
+
