@@ -29,9 +29,11 @@ fi
 if [ ! -f database/database.sqlite ]; then
     mkdir -p database
     touch database/database.sqlite
-    chmod 664 database/database.sqlite
-    chown www-data:www-data database/database.sqlite
 fi
+
+chmod 664 database/database.sqlite
+chown -R www-data:www-data database
+chmod -R 775 database
 
 # Set appropriate permissions
 chown -R www-data:www-data storage bootstrap/cache
