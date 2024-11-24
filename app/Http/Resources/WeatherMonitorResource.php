@@ -10,6 +10,7 @@ class WeatherMonitorResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array
@@ -21,7 +22,7 @@ class WeatherMonitorResource extends JsonResource
             'latitude'         => $this->latitude,
             'longitude'        => $this->longitude,
             'interval_minutes' => $this->interval_minutes,
-            'next_run_at'      => $this->next_run_at->format('d-m-Y H:i'),
+            'next_run_at'      => $this->next_run_at ? $this->next_run_at->format('d-m-Y H:i') : null,
         ];
     }
 }

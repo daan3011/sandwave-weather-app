@@ -1,5 +1,8 @@
 <template>
     <div class="flex flex-col w-full h-full p-5 bg-[#0C121E] text-white">
+      <!-- Include Toast component -->
+      <Toast ref="toast" />
+
       <!-- Header -->
       <Header
         :city="monitor.city"
@@ -47,95 +50,105 @@
     </div>
   </template>
 
-<script>
-import Header from "../components/WeatherMonitorReadings/Header.vue";
-import Map from "../components/WeatherMonitorReadings/Map.vue";
-import Filters from "../components/WeatherMonitorReadings/Filters.vue";
-import WeatherReadingCard from "../components/WeatherMonitorReadings/WeatherReadingCard.vue";
-import { fetchWeatherMonitorDetails, fetchWeatherMonitorReadings } from "../services/weatherMonitorReadingsService";
+  <script>
+  import Toast from "../components/shared/ToastNotification.vue";
+  import Header from "../components/WeatherMonitorReadings/Header.vue";
+  import Map from "../components/WeatherMonitorReadings/Map.vue";
+  import Filters from "../components/WeatherMonitorReadings/Filters.vue";
+  import WeatherReadingCard from "../components/WeatherMonitorReadings/WeatherReadingCard.vue";
+  import {
+    fetchWeatherMonitorDetails,
+    fetchWeatherMonitorReadings,
+  } from "../services/weatherMonitorReadingsService";
 
-export default {
-  components: {
-    Header,
-    Map,
-    Filters,
-    WeatherReadingCard,
-  },
-  props: ["id"],
-  data() {
-    return {
-      monitor: {},
-      weatherReadings: [],
-      currentPage: 1,
-      perPage: 10,
-      isLoading: false,
-      hasMore: true,
-      startDateTime: null,
-      endDateTime: null,
-    };
-  },
-  watch: {
-    startDateTime() {
-      this.filterReadings();
+  export default {
+    components: {
+      Toast,
+      Header,
+      Map,
+      Filters,
+      WeatherReadingCard,
     },
-    endDateTime() {
-      this.filterReadings();
+    props: ["id"],
+    data() {
+      return {
+        monitor: {},
+        weatherReadings: [],
+        currentPage: 1,
+        perPage: 10,
+        isLoading: false,
+        hasMore: true,
+        startDateTime: null,
+        endDateTime: null,
+      };
     },
-  },
-  methods: {
-    async fetchMonitorDetails() {
-      try {
-        const response = await fetchWeatherMonitorDetails(this.id);
-        this.monitor = response.data;
-      } catch (error) {
-        console.error("Failed to fetch monitor details:", error);
-      }
+    watch: {
+      startDateTime() {
+        this.filterReadings();
+      },
+      endDateTime() {
+        this.filterReadings();
+      },
     },
-    async fetchWeatherReadings(reset = false) {
-      if (this.isLoading || (!this.hasMore && !reset)) return;
+    methods: {
+      async fetchMonitorDetails() {
+        try {
+          const response = await fetchWeatherMonitorDetails(this.id);
+          this.monitor = response.data;
+        } catch (error) {
+          this.$refs.toast.addToast("Failed to load monitor details.", "error");
+        }
+      },
+      async fetchWeatherReadings(reset = false) {
+        if (this.isLoading || (!this.hasMore && !reset)) return;
 
-      if (reset) {
-        this.weatherReadings = [];
-        this.currentPage = 1;
-        this.hasMore = true;
-      }
+        if (reset) {
+          this.weatherReadings = [];
+          this.currentPage = 1;
+          this.hasMore = true;
+        }
 
-      this.isLoading = true;
-      try {
-        const response = await fetchWeatherMonitorReadings(
-          this.id,
-          this.currentPage,
-          this.perPage,
-          this.startDateTime,
-          this.endDateTime
-        );
-        this.weatherReadings = [...this.weatherReadings, ...response.data];
-        this.hasMore = response.data.length >= this.perPage;
-        this.currentPage += 1;
-      } catch (error) {
-        console.error("Failed to fetch weather readings:", error);
-        this.hasMore = false;
-      } finally {
-        this.isLoading = false;
-      }
-    },
-    filterReadings() {
-      this.fetchWeatherReadings(true);
-    },
-    handleScroll() {
-      const container = this.$refs.scrollContainer;
-      if (container.scrollTop + container.clientHeight >= container.scrollHeight - 10) {
-        this.fetchWeatherReadings();
-      }
-    },
-    goBack() {
-      this.$router.push("/weather-monitors");
-    },
-  },
-  async mounted() {
-    await this.fetchMonitorDetails();
-    await this.fetchWeatherReadings();
-  },
-};
-</script>
+        this.isLoading = true;
+        try {
+          const response = await fetchWeatherMonitorReadings(
+            this.id,
+            this.currentPage,
+            this.perPage,
+            this.startDateTime,
+            this.endDateTime
+          );
+          this.weatherReadings = [...this.weatherReadings, ...response.data];
+          this.hasMore = response.data.length >= this.perPage;
+          this.currentPage += 1;
 
+          if (reset) {
+          } else if (response.data.length > 0) {
+            this.$refs.toast.addToast("Fetched weather readings.");
+          }
+        } catch (error) {
+          console.error("Failed to fetch weather readings:", error);
+          this.$refs.toast.addToast("Failed to load weather readings.", "error");
+          this.hasMore = false;
+        } finally {
+          this.isLoading = false;
+        }
+      },
+      filterReadings() {
+        this.fetchWeatherReadings(true);
+      },
+      handleScroll() {
+        const container = this.$refs.scrollContainer;
+        if (container.scrollTop + container.clientHeight >= container.scrollHeight - 10) {
+          this.fetchWeatherReadings();
+        }
+      },
+      goBack() {
+        this.$router.push("/weather-monitors");
+      },
+    },
+    async mounted() {
+      await this.fetchMonitorDetails();
+      await this.fetchWeatherReadings();
+    },
+  };
+  </script>

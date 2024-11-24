@@ -1,5 +1,8 @@
 <template>
     <div class="flex flex-col gap-5 w-full h-full">
+      <!-- Include the Toast component -->
+      <Toast ref="toast" />
+
       <!-- Header -->
       <div class="flex justify-between items-center bg-[#212B3C] p-4 rounded-xl">
         <h1 class="text-2xl font-bold">Weather Monitors</h1>
@@ -59,13 +62,23 @@
   </template>
 
   <script>
-  import { fetchWeatherMonitors, createWeatherMonitor, deleteWeatherMonitor } from "../services/weatherMonitorsService";
+  import Toast from "../components/shared/ToastNotification.vue";
   import WeatherMonitorCard from "../components/WeatherMonitors/WeatherMonitorCard.vue";
   import CreateMonitorModal from "../components/WeatherMonitors/CreateMonitorModal.vue";
   import DeleteMonitorModal from "../components/WeatherMonitors/DeleteMonitorModal.vue";
+  import {
+    fetchWeatherMonitors,
+    createWeatherMonitor,
+    deleteWeatherMonitor,
+  } from "../services/weatherMonitorsService";
 
   export default {
-    components: { WeatherMonitorCard, CreateMonitorModal, DeleteMonitorModal },
+    components: {
+      Toast,
+      WeatherMonitorCard,
+      CreateMonitorModal,
+      DeleteMonitorModal,
+    },
     data() {
       return {
         weatherMonitors: [],
@@ -82,6 +95,7 @@
           const response = await fetchWeatherMonitors();
           this.weatherMonitors = response.data || [];
         } catch (error) {
+          this.$refs.toast.addToast("Error loading weather monitors", "error");
           console.error("Error loading weather monitors:", error);
         } finally {
           this.isLoading = false;
@@ -98,7 +112,9 @@
           await createWeatherMonitor(monitor);
           this.loadWeatherMonitors();
           this.closeCreateMonitorModal();
+          this.$refs.toast.addToast("Weather monitor created successfully");
         } catch (error) {
+          this.$refs.toast.addToast("Error creating weather monitor", "error");
           console.error("Error creating weather monitor:", error);
         }
       },
@@ -113,8 +129,12 @@
       async confirmDelete() {
         try {
           await deleteWeatherMonitor(this.monitorToDelete);
-          this.weatherMonitors = this.weatherMonitors.filter((monitor) => monitor.id !== this.monitorToDelete);
+          this.weatherMonitors = this.weatherMonitors.filter(
+            (monitor) => monitor.id !== this.monitorToDelete
+          );
+          this.$refs.toast.addToast("Weather monitor deleted successfully");
         } catch (error) {
+          this.$refs.toast.addToast("Error deleting weather monitor", "error");
           console.error("Error deleting weather monitor:", error);
         } finally {
           this.closeDeleteModal();
