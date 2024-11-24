@@ -7,27 +7,18 @@
           :key="index"
           :label="condition.label"
           :value="condition.value"
-          :icon="condition.icon"
         />
       </div>
     </div>
   </template>
 
   <script>
-  import ConditionCard from './ConditionCard.vue';
+  import ConditionCard from "./ConditionCard.vue";
 
   export default {
     components: { ConditionCard },
-    data() {
-      return {
-        conditions: [
-          { label: 'Real Feel', value: '30°C', icon: '☀️' },
-          { label: 'Real Feel', value: '30°C', icon: '☀️' },
-          { label: 'Real Feel', value: '30°C', icon: '☀️' },
-          { label: 'Real Feel', value: '30°C', icon: '☀️' },
-          // Add more conditions
-        ],
-      };
+    props: {
+      conditions: Array,
     },
   };
   </script>
