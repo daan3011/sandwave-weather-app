@@ -37,7 +37,7 @@ test('index returns a list of weather monitors', function () {
     $response = $this->getJson('/api/weather-monitors');
 
     $response->assertStatus(200)
-             ->assertJsonCount(3, 'data');
+        ->assertJsonCount(3, 'data');
 });
 
 test('index returns empty list when no weather monitors exist', function () {
@@ -60,12 +60,12 @@ test('index returns empty list when no weather monitors exist', function () {
     $response = $this->getJson('/api/weather-monitors');
 
     $response->assertStatus(200)
-             ->assertJsonCount(0, 'data');
+        ->assertJsonCount(0, 'data');
 });
 
 test('store creates a new weather monitor successfully', function () {
     $data = [
-        'city' => 'Test City',
+        'city' => 'Test city',
         'interval_minutes' => 30,
     ];
 
@@ -80,7 +80,7 @@ test('store creates a new weather monitor successfully', function () {
     $response = $this->postJson('/api/weather-monitors', $data);
 
     $response->assertStatus(201)
-             ->assertJsonFragment(['city' => 'Test City']);
+        ->assertJsonFragment(['city' => 'Test city']);
 });
 
 test('store returns validation errors when required fields are missing', function () {
@@ -89,7 +89,7 @@ test('store returns validation errors when required fields are missing', functio
     $response = $this->postJson('/api/weather-monitors', $data);
 
     $response->assertStatus(422)
-             ->assertJsonValidationErrors(['city', 'interval_minutes']);
+        ->assertJsonValidationErrors(['city', 'interval_minutes']);
 });
 
 test('show returns a weather monitor when it exists', function () {
@@ -105,7 +105,7 @@ test('show returns a weather monitor when it exists', function () {
     $response = $this->getJson("/api/weather-monitors/{$id}");
 
     $response->assertStatus(200)
-             ->assertJsonFragment(['id' => $id]);
+        ->assertJsonFragment(['id' => $id]);
 });
 
 test('show returns 404 when weather monitor does not exist', function () {
@@ -120,7 +120,7 @@ test('show returns 404 when weather monitor does not exist', function () {
     $response = $this->getJson("/api/weather-monitors/{$id}");
 
     $response->assertStatus(404)
-             ->assertJsonFragment(['message' => 'Weather monitor not found.']);
+        ->assertJsonFragment(['message' => 'Weather monitor not found.']);
 });
 
 test('destroy deletes a weather monitor when it exists', function () {
@@ -156,6 +156,5 @@ test('destroy returns 404 when weather monitor does not exist', function () {
     $response = $this->deleteJson("/api/weather-monitors/{$id}");
 
     $response->assertStatus(404)
-             ->assertJsonFragment(['message' => 'Weather monitor not found.']);
+        ->assertJsonFragment(['message' => 'Weather monitor not found.']);
 });
-
