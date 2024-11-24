@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\FetchWeatherDataException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use App\Http\Requests\GetWeatherRequest;
 use App\Http\Resources\WeatherDataResource;
 use Illuminate\Http\Response;
 use App\Interfaces\Services\OpenWeatherMapServiceInterface;
-use App\Exceptions\WeatherDataFetchException;
 
 class WeatherController extends Controller
 {
@@ -35,12 +35,14 @@ class WeatherController extends Controller
             return (new WeatherDataResource($weatherData))
                 ->response()
                 ->setStatusCode(Response::HTTP_OK);
-        } catch (\Exception $e) {
-            Log::error('Weather data fetch error for city ' . $city . ': ' . $e->getMessage());
+            } catch (FetchWeatherDataException $e) {
+                Log::error('Weather data fetch error for city ' . $city . ': ' . $e->getMessage());
 
-            return response()->json([
-                'error' => 'Unable to fetch weather data for the specified city.'
-            ], Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
+                // return response()->json([
+                //     'error' => 'Unable to fetch weather data for the specified city.'
+                // ], Response::HTTP_UNPROCESSABLE_ENTITY);
+                return response()->json([
+                ], Response::HTTP_OK);
+            }
     }
 }
