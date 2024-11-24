@@ -8,4 +8,5 @@ interface OpenWeatherMapServiceInterface
     public function getAirConditions(float $lat, float $lon): array;
     public function getCoordinates(string $city): array;
     public function extractWeatherData(array $weatherData): array;
+    public function getCombinedWeatherData(string $city): array;
 }
