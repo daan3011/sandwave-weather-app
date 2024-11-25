@@ -9,12 +9,19 @@ use Illuminate\Http\Client\RequestException;
 use App\Exceptions\FetchWeatherDataException;
 use App\Interfaces\Services\OpenWeatherMapServiceInterface;
 use Illuminate\Http\Response;
+use Illuminate\Contracts\Cache\Repository as CacheRepository;
 
 class OpenWeatherMapService implements OpenWeatherMapServiceInterface
 {
+    private const CURRENT_WEATHER_ENDPOINT = '/weather';
+    private const FORECAST_ENDPOINT        = '/forecast';
+    private const AIR_POLLUTION_ENDPOINT   = '/air_pollution';
+    private const GEO_COORDINATES_ENDPOINT  = '/direct';
+
     protected string $apiKey;
     protected string $apiUrl;
     protected string $geoApiUrl;
+    // protected CacheRepository $cache;
 
     /**
      * OpenWeatherMapService constructor.
@@ -23,9 +30,9 @@ class OpenWeatherMapService implements OpenWeatherMapServiceInterface
      */
     public function __construct()
     {
-        $this->apiKey = config('weather_apis.providers.openweathermap.api_key');
-        $this->apiUrl = config('weather_apis.providers.openweathermap.api_url');
-        $this->geoApiUrl = config('weather_apis.providers.openweathermap.geo_api_url');
+        $this->apiKey = config('weather.providers.openweathermap.api_key');
+        $this->apiUrl = config('weather.providers.openweathermap.api_url');
+        $this->geoApiUrl = config('weather.providers.openweathermap.geo_api_url');
 
         if (empty($this->apiKey)) {
             throw new MissingApiKeyException('The OpenWeatherMap API key is not set in the configuration.');
@@ -73,7 +80,7 @@ class OpenWeatherMapService implements OpenWeatherMapServiceInterface
      */
     public function getCurrentWeather(string $city): array
     {
-        $url = "{$this->apiUrl}/weather";
+        $url = $this->apiUrl . self::CURRENT_WEATHER_ENDPOINT;
         $params = [
             'q'     => $city,
             'units' => 'metric',
@@ -91,7 +98,7 @@ class OpenWeatherMapService implements OpenWeatherMapServiceInterface
      */
     public function getFiveDayForecast(string $city): array
     {
-        $url = "{$this->apiUrl}/forecast";
+        $url = $this->apiUrl . self::FORECAST_ENDPOINT;
         $params = [
             'q'     => $city,
             'units' => 'metric',
@@ -110,7 +117,7 @@ class OpenWeatherMapService implements OpenWeatherMapServiceInterface
      */
     public function getAirConditions(float $lat, float $lon): array
     {
-        $url = "{$this->apiUrl}/air_pollution";
+        $url = $this->apiUrl . self::AIR_POLLUTION_ENDPOINT;
         $params = [
             'lat' => $lat,
             'lon' => $lon,
@@ -128,7 +135,7 @@ class OpenWeatherMapService implements OpenWeatherMapServiceInterface
      */
     public function getCoordinates(string $city): array
     {
-        $url = "{$this->geoApiUrl}/direct";
+        $url = $this->geoApiUrl . self::GEO_COORDINATES_ENDPOINT;
         $params = [
             'q'     => $city,
             'limit' => 1,
@@ -137,6 +144,7 @@ class OpenWeatherMapService implements OpenWeatherMapServiceInterface
         $response = $this->makeRequest($url, $params);
 
         if (empty($response)) {
+            Log::error("No coordinates found for city: {$city}");
             throw new FetchWeatherDataException("No coordinates found for city: {$city}", Response::HTTP_NOT_FOUND);
         }
 
@@ -185,16 +193,8 @@ class OpenWeatherMapService implements OpenWeatherMapServiceInterface
     {
         $coordinates = $this->getCoordinates($city);
 
-        if (empty($coordinates)) {
-            throw new FetchWeatherDataException("Could not find coordinates for city: {$city}");
-        }
-
-        $lat = $coordinates['lat'] ?? null;
-        $lon = $coordinates['lon'] ?? null;
-
-        if ($lat === null || $lon === null) {
-            throw new FetchWeatherDataException("Invalid coordinates received for city: {$city}");
-        }
+        $lat = $coordinates['lat'];
+        $lon = $coordinates['lon'];
 
         $currentWeather = $this->getCurrentWeather($city);
         $forecast       = $this->getFiveDayForecast($city);
