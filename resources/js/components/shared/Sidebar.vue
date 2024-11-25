@@ -23,6 +23,7 @@
           >
             <span class="text-2xl">📡</span>
             Weather monitors
+
           </router-link>
         </li>
       </ul>
