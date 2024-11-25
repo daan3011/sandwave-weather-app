@@ -1,66 +1,249 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# Sandwave technical assignment
 
-## About Laravel
+A Weather monitoring application built with Laravel 11 and Vue 3, provides real-time weather data, forecasts, and air quality information. This application leverages Docker for seamless local development.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+# Table of contents
+1. [Features](#features)
+2. [Techstack](#tech)
+3. [Prerequisites](#prerequisites)
+4. [Installation](#installation)
+5. [Environment Variables](#environment-variables)
+6. [API Reference](#api-reference)
+7. [Running Tests](#running-tests)
+8. [Contributing](#contributing)
+9. [License](#license)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Features
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- Real-Time Weather Data: Fetch current weather conditions for any city.
+- 5-Day Forecast: Get detailed weather forecasts up to five days ahead.
+- Air Quality Index: Monitor air quality parameters in selected locations.
+- Create weather monitors to monitor weather changes over time. 
+- Caching Mechanism: Efficient data retrieval with caching to reduce API calls.
+- Rate Limiting: Protects the API endpoints from abuse and ensures fair usage.
+- Containerized Environment: Simplifies setup and ensures consistency across development environments.
+- API Documentation: Comprehensive API docs available at /request-docs.
+## Tech Stack
 
-## Learning Laravel
+**Server:** Laravel 11
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+**Client:** Vue 3, TailwindCSS
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+**Database:** SQLite
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+**Caching:** Laravel Cache (Database driver)
 
-## Laravel Sponsors
+**Containerization:** Docker, Docker Compose
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+**Testing** Pest PHP
 
-### Premium Partners
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+## Prerequisites
 
+Before getting started, ensure you have the following installed on your system:
+
+- Docker
+- Docker Compose
+- Git
+- Node.js & npm (for frontend asset management)
+## Installation
+Follow these steps to set up the Weather App locally using Docker:
+
+Clone the project
+
+```bash
+  git clone git@github.com:daan3011/sandwave-weather-app.git
+```
+Move into the project directory
+```bash
+  cd sandwave-weather-app
+```
+Build the container, use the -f flag the specify the location of the docker compose file
+```bash
+  docker compose -f ./docker/docker-compose.yml build
+```
+Run the containers, use the -d flag to run in detached mode
+```bash
+  docker compose -f ./docker/docker-compose.yml up
+``` 
+Notice:the entrypoint script of the container:
+- copies .env.example to .env
+- installs composer dependencies
+- installs npm dependencies
+- generates the application key
+- sets up the sqlite database
+- runs the migrations
+- builds frontend assets for production
+- starts the laravel queue and schedule via supervisord
+- starts nginx and php-fpm 
+
+Notice: this is a development container and is meant for local development only. The project directory is mounted as a volume so changes are immediately reflected.
+
+To watch for frontend changes run:
+```bash
+  docker exec -it weather-app php npm run dev
+``` 
+## Environment Variables
+
+To run this project, you will need to add the following environment variables to your .env file
+
+`OPENWEATHERMAP_API_KEY`
+
+Optional environment variables, these environment variables have defaults set which can be editted by setting them in .env or modifying the config/weather.php configuration file
+
+`WEATHER_OVERVIEW_CACHE_TTL`
+
+`OPENWEATHERMAP_API_URL`
+
+`OPENWEATHERMAP_GEO_API_URL`
+
+
+
+## API Reference
+
+1. Accessing API Docs
+Once the Docker containers are up and running, the API documentation is accessible at:
+
+```bash
+  http://localhost:8080/request-docs
+``` 
+Note: Ensure that the application is running and accessible on port 8080.
+
+#### Weather data
+
+```http
+  GET /api/weather
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `city` | `string` | **Required**. Valid city name |
+
+get weather data for a city
+
+#### Weather Monitors
+
+```http
+  GET /api/weather-monitors
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :------------------------- |
+
+list all weather data
+
+```http
+  POST /api/weather-monitors
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :------------------------- |
+| `city` | `string` | **Required**. Valid city name |
+| `interval` | `int` | **Required**. Interval to pull data on |
+
+Create a new weather monitor
+
+```http
+  GET /api/weather-monitors/{monitor_id}
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :------------------------- |
+| `monitor_id` | `int` | **Required**. Weather monitor id |
+
+Get specific weather monitor
+
+```http
+  DELETE /api/weather-monitors/{monitor_id}
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :------------------------- |
+| `monitor_id` | `int` | **Required**. Weather monitor id |
+
+Delete a weather monitor
+
+#### Weather Readings
+
+```http
+  GET /api/weather-readings
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :------------------------- |
+
+Get paginated weather readings
+
+## Rate Limiting
+To ensure fair usage and protect the API from abuse, the application implements rate limiting via the RateLimitServiceProvider.
+
+Configuration
+File: app/Providers/RateLimitServiceProvider.php
+
+## Caching
+caching reduces redundant API calls, the /weather API call is cached for 5 minutes to ensure a balance between up-to-date information and optimized performance.
+
+#### Key Components:
+- **OpenWeatherMapServiceInterface:** Defines the contract for weather data services.
+- **OpenWeatherMapService:** Implements the interface, directly handling API interactions with OpenWeatherMap.
+- **CachingOpenWeatherMapService:** Acts as a decorator for the original service, introducing caching functionality to store and reuse API responses.
+## Running Tests with Pest
+
+To run the tests in the container, run the following command
+```bash
+  docker exec -it weather-app php artisan test
+```
+To speed up the process and run tests in parralel use
+```bash
+  docker exec -it weather-app php artisan test --parallel
+```
 ## Contributing
+Contributions are welcome! If you have suggestions or improvements, feel free to create an issue or submit a pull request.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Steps to Contribute:
 
-## Code of Conduct
+#### Fork the Repository:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Click on the "Fork" button at the top-right corner of the repository page.
 
-## Security Vulnerabilities
+#### Clone Your Fork:
+```bash
+  git clone https://github.com/yourusername/weather-app.git
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+#### Move into project:
+```bash
+  cd weather-app
+```
 
+#### Create a Feature Branch:
+```bash
+  git checkout -b feature/YourFeatureName
+```
+
+#### Make Your Changes:
+
+- Implement your feature or fix.
+
+#### Commit Your Changes:
+```bash
+  git commit -m "Add feature: YourFeatureName"
+```
+
+#### Push to Your Fork:
+```bash
+  git push origin feature/YourFeatureName
+```
+
+#### Create a Pull Request:
+- Navigate to the original repository and click on "Compare & pull request."
+
+## Guidelines:
+- **Code Standards:** Follow PSR standards and Laravel's best practices.
+- **Testing:** Ensure that all tests pass and add new tests for your changes.
+- **Documentation:** Update documentation as necessary.
 ## License
+This project is open-source and available under the MIT License.
+[MIT](https://choosealicense.com/licenses/mit/)
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
