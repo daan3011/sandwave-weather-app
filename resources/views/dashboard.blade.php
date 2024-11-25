@@ -15,18 +15,18 @@
 <body class="bg-[#0C121E] text-white">
     <div class="flex flex-col lg:flex-row gap-5 w-full h-full p-5 overflow-auto">
         <!-- Sidebar -->
-        <aside class="bg-[#212B3C] text-white rounded-xl p-5 lg:max-w-[15%] w-full lg:w-auto flex-shrink-0">
+        <aside class="bg-[#212B3C] text-white rounded-xl p-5 max-w-[15%] w-full lg:w-auto flex-shrink-0">
             <div class="mb-10 flex justify-center">
                 <span>LOGO</span>
             </div>
-            <ul class="flex lg:flex-col flex-row gap-4 lg:text-center text-sm lg:text-base">
+            <ul class="flex flex-col flex-row gap-8 lg:text-center text-sm lg:text-base">
                 <li class="font-bold flex flex-col gap-2 items-center">
                     <span>ICON</span>
-                    Weather
+                    <span class="flex flex-col justify-center items-center gap-1 text-center md:text-start md:gap-4 md:items-start md:flex-row text-white no-underline hover:text-gray-400">Weather</span>
                 </li>
                 <li class="font-bold flex flex-col gap-2 items-center">
                     <span>ICON</span>
-                    Maps
+                    <span class="flex flex-col justify-center items-center gap-1 text-center md:text-start md:gap-4 md:items-start md:flex-row text-white no-underline hover:text-gray-400">Maps</span>
                 </li>
             </ul>
         </aside>
