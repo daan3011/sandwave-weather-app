@@ -69,7 +69,7 @@
           const isoFormatted = `${year}-${month}-${day}T${timePart}`;
           const dateObject = new Date(isoFormatted);
 
-          return new Intl.DateTimeFormat("en-US", {
+          return new Intl.DateTimeFormat("nl-NL", {
             weekday: "short",
             year: "numeric",
             month: "short",
