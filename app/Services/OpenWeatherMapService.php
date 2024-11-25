@@ -8,6 +8,7 @@ use App\Exceptions\MissingApiKeyException;
 use Illuminate\Http\Client\RequestException;
 use App\Exceptions\FetchWeatherDataException;
 use App\Interfaces\Services\OpenWeatherMapServiceInterface;
+use Illuminate\Http\Response;
 
 class OpenWeatherMapService implements OpenWeatherMapServiceInterface
 {
@@ -45,7 +46,6 @@ class OpenWeatherMapService implements OpenWeatherMapServiceInterface
 
         try {
             $response = Http::get($url, $params)->throw();
-
             return $response->json();
         } catch (RequestException $e) {
             $status = $e->response->status();
@@ -135,6 +135,10 @@ class OpenWeatherMapService implements OpenWeatherMapServiceInterface
         ];
 
         $response = $this->makeRequest($url, $params);
+
+        if (empty($response)) {
+            throw new FetchWeatherDataException("No coordinates found for city: {$city}", Response::HTTP_NOT_FOUND);
+        }
 
         return $response[0] ?? [];
     }

@@ -133,7 +133,7 @@ test('getCoordinates returns coordinates for a valid city', function () {
     expect($result['lon'])->toBe(4.9041);
 });
 
-test('getCoordinates returns empty array when city is not found', function () {
+test('getCoordinates throws exception when city is not found', function () {
     $city = 'Unknown City';
     $mockResponse = [];
 
@@ -141,11 +141,12 @@ test('getCoordinates returns empty array when city is not found', function () {
         'api.openweathermap.org/geo/1.0/direct*' => Http::response($mockResponse, Response::HTTP_OK),
     ]);
 
-    $result = $this->openWeatherMapService->getCoordinates($city);
 
-    expect($result)->toBeArray();
-    expect($result)->toBeEmpty();
+    $this->expectException(\App\Exceptions\FetchWeatherDataException::class);
+    $this->expectExceptionCode(Response::HTTP_NOT_FOUND);
+    $this->openWeatherMapService->getCoordinates($city);
 });
+
 
 test('extractWeatherData extracts and formats weather data correctly', function () {
     $weatherData = [
@@ -243,6 +244,7 @@ test('getCurrentWeather throws an exception for API errors', function () {
     ]);
 
     $this->expectException(\App\Exceptions\FetchWeatherDataException::class);
+    $this->expectExceptionCode(Response::HTTP_UNPROCESSABLE_ENTITY);
     $this->openWeatherMapService->getCurrentWeather($city);
 });
 
