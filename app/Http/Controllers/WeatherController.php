@@ -38,11 +38,9 @@ class WeatherController extends Controller
             } catch (FetchWeatherDataException $e) {
                 Log::error('Weather data fetch error for city ' . $city . ': ' . $e->getMessage());
 
-                // return response()->json([
-                //     'error' => 'Unable to fetch weather data for the specified city.'
-                // ], Response::HTTP_UNPROCESSABLE_ENTITY);
                 return response()->json([
-                ], Response::HTTP_OK);
+                    'error' => 'Unable to fetch weather data for the specified city.'
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
             }
     }
 }

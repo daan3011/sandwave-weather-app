@@ -38,7 +38,6 @@ import WeatherOverview from "../components/WeatherDashboard/WeatherOverview.vue"
 import TodayForecast from "../components/WeatherDashboard/TodayForecast.vue";
 import AirCondition from "../components/WeatherDashboard/AirCondition.vue";
 import WeeklyForecast from "../components/WeatherDashboard/WeeklyForecast.vue";
-import apiClient from "../services/http";
 import { fetchWeatherData } from "../services/weatherOverviewService";
 
 
