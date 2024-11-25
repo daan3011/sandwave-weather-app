@@ -84,6 +84,11 @@ To watch for frontend changes run:
 ```bash
   docker exec -it weather-app php npm run dev
 ``` 
+
+To seed the database with realistic mock data run:
+```bash
+  docker exec -it weather-app php php artisan db:seed
+``` 
 ## Environment Variables
 
 To run this project, you will need to add the following environment variables to your .env file
